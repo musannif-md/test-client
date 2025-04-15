@@ -32,14 +32,24 @@ class Client:
         else:
             print(f"Login failed: {response.status_code} - {response.text}")
 
-    def request(self, method, endpoint, data_body=None, **kwargs):
+    def request(self, method, endpoint, data_body=None, is_json=True, **kwargs):
         url = f"{BASE_URL}{endpoint}"
-        return request(method, url, headers=self.headers, json=data_body, **kwargs)
+        if is_json:
+            res = request(method, url, headers=self.headers, json=data_body, **kwargs)
+        else:
+            res = request(method, url, headers=self.headers, data=data_body, **kwargs)
+        return res
 
-    def authenticated_request(self, method, endpoint, data_body=None, **kwargs):
+    def authenticated_request(
+        self, method, endpoint, data_body=None, is_json=True, **kwargs
+    ):
         if not self.token:
             print("Error: No token found. Please login or signup first.")
             return None
         url = f"{BASE_URL}{endpoint}"
         auth_headers = {**self.headers, "Authorization": f"Bearer {self.token}"}
-        return request(method, url, headers=auth_headers, json=data_body, **kwargs)
+        if is_json:
+            res = request(method, url, headers=auth_headers, json=data_body, **kwargs)
+        else:
+            res = request(method, url, headers=auth_headers, data=data_body, **kwargs)
+        return res
