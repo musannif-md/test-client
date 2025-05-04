@@ -2,15 +2,19 @@ import asyncio
 import websockets
 import uuid
 import json
+import argparse
 
 from api_client import Client
 from config import *
 
 
-async def connect_websocket(uri, token):
+async def connect_websocket(uri, token, is_session_starter=False):
     headers = {"Authorization": f"Bearer {token}"}
     session_id = uuid.UUID(int=USER_ID)
     uri += f"?sid={session_id}"
+
+    if is_session_starter:
+        uri += f"&note_name=test-note-1"
 
     try:
         async with websockets.connect(uri, additional_headers=headers) as websocket:
@@ -56,6 +60,16 @@ async def connect_websocket(uri, token):
 
 
 async def main():
+    parser = argparse.ArgumentParser(
+        description="WebSocket client with optional note name."
+    )
+    parser.add_argument(
+        "--first",
+        action="store_true",
+        help="Pass 'test-note-1' as note_name to the WebSocket endpoint.",
+    )
+    args = parser.parse_args()
+
     client = Client(use_proto=False)
     client.login()
 
@@ -65,9 +79,8 @@ async def main():
     print("Login successful. Connecting to WebSocket...")
 
     websocket_uri = f"ws://{BASE_URL.split('//')[1]}/connect"
-    print(f"WebSocket URI: {websocket_uri}")
 
-    await connect_websocket(websocket_uri, client.token)
+    await connect_websocket(websocket_uri, client.token, True if args.first else False)
 
 
 if __name__ == "__main__":

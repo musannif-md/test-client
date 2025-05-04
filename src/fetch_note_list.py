@@ -8,11 +8,7 @@ if __name__ == "__main__":
     if not client.token:
         exit(1)
 
-    payload = {
-        "username": USERNAME,
-    }
-
-    res = client.authenticated_request("POST", "/notes", payload)
+    res = client.authenticated_request("POST", "/notes")
     print(res)
     if res:
         print(res.content)

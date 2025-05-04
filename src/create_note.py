@@ -9,7 +9,6 @@ if __name__ == "__main__":
         exit(1)
 
     payload = {
-        "username": USERNAME,
         "note_name": "test-note-1",
         "content": "I sure\n hope\n\tthis works...",
     }
