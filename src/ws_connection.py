@@ -8,12 +8,12 @@ from api_client import Client
 from config import *
 
 
-async def connect_websocket(uri, token, is_session_starter=False):
+async def connect_websocket(uri, token, init_session):
     headers = {"Authorization": f"Bearer {token}"}
     session_id = uuid.UUID(int=USER_ID)
     uri += f"?sid={session_id}"
 
-    if is_session_starter:
+    if init_session:
         uri += f"&note_name=test-note-1"
 
     try:
